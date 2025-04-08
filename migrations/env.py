@@ -17,7 +17,7 @@ import src.models
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("sqlalchemy.url", Config.DATABASE_URL)
+config.set_main_option("sqlalchemy.url", Config.DATABASE_URL_ASYNC)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

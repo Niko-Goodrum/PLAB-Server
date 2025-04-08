@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     ALGORITHM: str
     TOKEN_EXPIRY: int
     REFRESH_EXPIRY: int
-    DATABASE_URL: str
+    DATABASE_URL_ASYNC: str
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 Config = Settings()
