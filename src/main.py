@@ -22,6 +22,7 @@ openapi_tags: list
 
 with open("swagger_metadata.json", "r") as json_file:
     openapi_tags = json.load(json_file)
+
 app = FastAPI(
     redoc_url=None,
     dependencies=[Depends(AUTH_HEADER)],
