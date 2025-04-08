@@ -9,7 +9,7 @@ from src.routers.auth.utils import generate_password_hash
 
 
 class UserService:
-    async def get_user_by_email(self, email: str, session: AsyncSession):
+    async def get_user_by_email(self, email: str, session: AsyncSession) -> User:
         statement = select(User).where(User.email == email)
 
         result = await session.exec(statement)
@@ -38,7 +38,7 @@ class UserService:
 
         new_user = User(**user_data_dict)
 
-        new_user.password_hash = generate_password_hash(user_data_dict["password"])
+        new_user.password_hash = generate_password_hash(user_data.password)
 
         session.add(new_user)
         await session.commit()

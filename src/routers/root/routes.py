@@ -13,4 +13,4 @@ root_router = APIRouter()
     }
 })
 async def root():
-    return JSONResponse(status_code=200, content={"message": "상민이 여드름"})
+    return JSONResponse(status_code=200, content=BaseResponse(message="상민이 여드름").to_dict())
