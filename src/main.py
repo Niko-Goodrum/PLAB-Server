@@ -12,21 +12,10 @@ from src.routers.auth.routes import auth_router
 
 AUTH_HEADER = APIKeyHeader(name="Authorization", auto_error=False)
 
-SWAGGER_HEADERS = {
-    "title": "PLAB",
-    "version": "0.0.69",
-}
-
-
-openapi_tags: list
-
-with open("swagger_metadata.json", "r") as json_file:
-    openapi_tags = json.load(json_file)
 
 app = FastAPI(
     redoc_url=None,
     dependencies=[Depends(AUTH_HEADER)],
-    openapi_tags=openapi_tags,
 )
 
 app.add_middleware(
