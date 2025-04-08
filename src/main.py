@@ -1,9 +1,7 @@
 import json
 
-import uvicorn
 from fastapi import FastAPI, Depends
 from fastapi.openapi.utils import get_openapi
-from fastapi.responses import JSONResponse
 from fastapi.security.api_key import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -29,7 +27,6 @@ app = FastAPI(
     dependencies=[Depends(AUTH_HEADER)],
     openapi_tags=openapi_tags,
 )
-
 
 app.add_middleware(
     CORSMiddleware,
