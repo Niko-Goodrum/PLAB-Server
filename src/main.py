@@ -2,12 +2,14 @@ import json
 
 import uvicorn
 from fastapi import FastAPI, Depends
+from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 from fastapi.security.api_key import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.schemas import BaseResponse
-from src.routers import root_router
+from src.handlers.auth import add_auth_exception_handlers
+from src.handlers import add_validation_exception_handler
+from src.routers.root.routes import root_router
 from src.routers.auth.routes import auth_router
 
 AUTH_HEADER = APIKeyHeader(name="Authorization", auto_error=False)
@@ -22,15 +24,12 @@ openapi_tags: list
 
 with open("swagger_metadata.json", "r") as json_file:
     openapi_tags = json.load(json_file)
-
-
 app = FastAPI(
     redoc_url=None,
     dependencies=[Depends(AUTH_HEADER)],
     openapi_tags=openapi_tags,
-    swagger_ui_parameters={ },
-    **SWAGGER_HEADERS
 )
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -39,6 +38,22 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+def custom_openapi():
+    if not app.openapi_schema:
+        app.openapi_schema = get_openapi(
+            title="PLAB",
+            version="0.0.69",
+            routes=app.routes,
+        )
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
+
+
+add_validation_exception_handler(app)
+add_auth_exception_handlers(app)
 
 
 app.include_router(root_router, tags=["상드름"])

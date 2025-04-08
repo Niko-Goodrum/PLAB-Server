@@ -3,7 +3,7 @@ import pathlib
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    SECRET_KEY: str
+    JWT_SECRET: str
     ALGORITHM: str
     TOKEN_EXPIRY: int
     REFRESH_EXPIRY: int

@@ -1,6 +1,5 @@
 from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlmodel.ext.asyncio.session import AsyncSession
-from starlette import status
 from starlette.responses import JSONResponse
 
 from .dependencies import (
@@ -8,7 +7,7 @@ from .dependencies import (
     RefreshTokenBearer,
     get_current_user,
 )
-from .errors import UserAlreadyExists
+from .exceptions import UserAlreadyExists
 from src.schemas.user import CreateUserRequest
 from .service import UserService
 from .utils import create_access_token
@@ -18,7 +17,14 @@ from src.schemas import BaseResponse
 auth_router = APIRouter()
 user_service = UserService()
 
-@auth_router.post("/signup", response_model=BaseResponse)
+@auth_router.post("/signup", response_model=BaseResponse, responses={
+    200: {
+        "model": BaseResponse
+        },
+    422: {
+        "model": BaseResponse
+    }
+})
 async def signup(
         user_data: CreateUserRequest,
         bg_tasks: BackgroundTasks,

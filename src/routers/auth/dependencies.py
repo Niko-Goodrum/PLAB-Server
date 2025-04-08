@@ -7,7 +7,7 @@ from fastapi.security.http import HTTPAuthorizationCredentials, HTTPBearer
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.db.main import get_session
-from src.routers.auth.errors import InvalidToken, AccessTokenRequired, RefreshTokenRequired
+from src.routers.auth.exceptions import InvalidToken, AccessTokenRequired, RefreshTokenRequired
 from src.routers.auth.service import UserService
 from src.routers.auth.utils import decode_token
 

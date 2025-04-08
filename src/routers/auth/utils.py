@@ -30,7 +30,7 @@ def create_access_token(
     }
 
     token = jwt.encode(
-        payload=payload, key=Config.JWT_SECRET, algorithm=Config.JWT_ALGORITHM
+        payload=payload, key=Config.JWT_SECRET, algorithm=Config.ALGORITHM
     )
 
     return token
@@ -38,7 +38,7 @@ def create_access_token(
 def decode_token(token: str) -> dict:
     try:
         token_data = jwt.decode(
-            jwt=token, key=Config.JWT_SECRET, algorithms=[Config.JWT_ALGORITHM]
+            jwt=token, key=Config.JWT_SECRET, algorithms=[Config.ALGORITHM]
         )
 
         return token_data
