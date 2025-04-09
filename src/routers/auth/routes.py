@@ -18,11 +18,7 @@ from ...config import Config
 from ...db.main import get_session
 from src.schemas import BaseResponse
 
-auth_router = APIRouter(prefix="/auth")
-user_service = UserService()
-
-
-@auth_router.post("/signup", response_model=BaseResponse, responses={
+auth_router = APIRouter(prefix="/auth", responses={
     200: {
         "model": BaseResponse
     },
@@ -30,6 +26,10 @@ user_service = UserService()
         "model": BaseResponse
     }
 })
+user_service = UserService()
+
+
+@auth_router.post("/signup", response_model=BaseResponse)
 async def signup(
         user_data: CreateUserRequest,
         bg_tasks: BackgroundTasks,
@@ -49,14 +49,7 @@ async def signup(
     return JSONResponse(status_code=201, content=BaseResponse(message="회원가입이 완료되었습니다.").to_dict()())
 
 
-@auth_router.post("/signin", response_model=BaseResponse, responses={
-    200: {
-        "model": BaseResponse
-    },
-    422: {
-        "model": BaseResponse
-    }
-})
+@auth_router.post("/signin", response_model=BaseResponse)
 async def signin(
         user_data: SigninRequest,
         bg_tasks: BackgroundTasks,
