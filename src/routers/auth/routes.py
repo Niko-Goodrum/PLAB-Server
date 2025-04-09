@@ -1,23 +1,24 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.responses import JSONResponse
+from starlette.status import HTTP_200_OK
 
 from .dependencies import (
     AccessTokenBearer,
     RefreshTokenBearer,
     get_current_user,
 )
-from .exceptions import UserAlreadyExists, InvalidCredentials
-from src.schemas.user import CreateUserRequest, SigninRequest, UserResponse
+from .exceptions import UserAlreadyExists, InvalidCredentials, InvalidToken
+from src.schemas.user import CreateUserRequest, SigninRequest, UserResponse, RefreshRequest
 from .service import UserService
 from .utils import create_access_token, verify_password
 from ...config import Config
 from ...db.main import get_session
 from src.schemas import BaseResponse
 
-auth_router = APIRouter()
+auth_router = APIRouter(prefix="/auth")
 user_service = UserService()
 
 
@@ -66,7 +67,6 @@ async def signin(
 
     user = await user_service.get_user_by_email(email, session)
 
-
     if user is not None:
         password_is_valid = verify_password(password, user.password_hash)
 
@@ -98,3 +98,27 @@ async def signin(
             )
 
     raise InvalidCredentials()
+
+
+@auth_router.post("/refresh")
+async def refresh(
+        request: RefreshRequest,
+        token_details: dict = Depends(AccessTokenBearer())
+):
+    expiry_timestamp = token_details["exp"]
+
+    RefreshTokenBearer().verify_token_data(token_data=request)
+
+    if datetime.fromtimestamp(expiry_timestamp) > datetime.now():
+        new_access_token = create_access_token(user_data=token_details["user"])
+
+        return JSONResponse(status_code=HTTP_200_OK, content=BaseResponse(
+            message="리프레시가 성공했습니다.",
+            data=UserResponse(
+                access_token=new_access_token,
+                refresh_token=request.refresh_token
+            ).to_dict()
+        ).to_dict())
+
+
+    raise InvalidToken

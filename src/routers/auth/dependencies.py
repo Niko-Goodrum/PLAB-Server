@@ -10,6 +10,7 @@ from src.db.main import get_session
 from src.routers.auth.exceptions import InvalidToken, AccessTokenRequired, RefreshTokenRequired
 from src.routers.auth.service import UserService
 from src.routers.auth.utils import decode_token
+from src.schemas.user import RefreshRequest
 
 user_service = UserService()
 
@@ -21,11 +22,14 @@ def token_valid(token: str) -> bool:
 
 
 class TokenBearer(HTTPBearer):
-    def __init__(self, auto_error=True):
+    def __init__(self, auto_error=False):
         super().__init__(auto_error=auto_error)
 
     async def __call__(self, request: Request) -> HTTPAuthorizationCredentials:
         creds = await super().__call__(request)
+
+        if creds is None:
+            raise InvalidToken()
 
         token = creds.credentials
 
@@ -39,7 +43,7 @@ class TokenBearer(HTTPBearer):
         return token_data
 
     def verify_token_data(self, token_data: Any):
-        raise Exception("Not Implemented")
+        raise NotImplementedError
 
 
 class AccessTokenBearer(TokenBearer):
@@ -49,8 +53,8 @@ class AccessTokenBearer(TokenBearer):
 
 
 class RefreshTokenBearer(TokenBearer):
-    def verify_token_data(self, token_data: dict) -> None:
-        if token_data and not token_data["refresh"]:
+    def verify_token_data(self, token_data: RefreshRequest) -> None:
+        if token_data and not token_data.refresh_token:
             raise RefreshTokenRequired()
 
 

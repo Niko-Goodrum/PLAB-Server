@@ -31,6 +31,17 @@ class SigninRequest(BaseDictModel):
         }
     }
 
+class RefreshRequest(BaseDictModel):
+    refresh_token: str = Field()
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "refresh_token": "REFRESH_TOKEN",
+            }
+        }
+    }
+
 class UserResponse(BaseDictModel):
     access_token: str = Field(...)
     refresh_token: str = Field(...)
