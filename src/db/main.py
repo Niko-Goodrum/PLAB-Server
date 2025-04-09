@@ -23,7 +23,4 @@ async def init_db() -> None:
 async def get_session() -> AsyncSession:
 
     async with Session() as session:
-        try:
-            yield session
-        finally:
-            await session.close()
+        yield session
