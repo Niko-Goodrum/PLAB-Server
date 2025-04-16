@@ -42,8 +42,6 @@ class UserService:
         await session.flush()
         await session.commit()
 
-        await session.refresh(new_user)
-
         return new_user
 
     async def update_user(self, user: User, user_date: dict, session: AsyncSession):
