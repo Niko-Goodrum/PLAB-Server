@@ -15,8 +15,6 @@ async_engine = create_async_engine(
     echo=True
 )
 
-
-
 async def init_db() -> None:
     async with async_engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
@@ -28,13 +26,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
     )
 
     async with Session() as session:
-        try:
-            yield session
-        except Exception as e:
-            await session.rollback()
-            raise
-        finally:
-            await session.close()
+        yield session
 
 
 
