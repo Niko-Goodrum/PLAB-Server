@@ -1,5 +1,6 @@
 import logging
 import uuid
+from typing import Optional
 
 from sqlalchemy.exc import NoResultFound
 from sqlmodel import select
@@ -10,25 +11,24 @@ from src.schemas.user import CreateUserRequest
 from src.routers.auth.utils import generate_password_hash
 
 
-class UserService:
-    logger = logging.getLogger(__name__)
 
-    async def get_user_by_email(self, email: str, session: AsyncSession) -> User | None:
+class UserService:
+    async def get_user_by_email(self, email: str, session: AsyncSession) -> Optional[User]:
         try:
             statement = select(User).where(User.email == email)
             result = await session.exec(statement)
             user = result.first()
-
             return user
+
         except Exception as e:
-            logging.exception(e)
+            logging.exception(msg=e)
             return None
 
 
     async def get_user_by_id(self, user_uuid: uuid.UUID, session: AsyncSession):
         statement = select(User).where(User.uuid == user_uuid)
 
-        result = await session.execute(statement)
+        result = await session.exec(statement)
 
         user = result.scalars().first()
 
