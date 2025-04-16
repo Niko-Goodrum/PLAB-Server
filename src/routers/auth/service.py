@@ -38,7 +38,11 @@ class UserService:
         new_user.password_hash = generate_password_hash(user_data.password)
 
         session.add(new_user)
+
         await session.flush()
+        await session.commit()
+
+        await session.refresh(new_user)
 
         return new_user
 
