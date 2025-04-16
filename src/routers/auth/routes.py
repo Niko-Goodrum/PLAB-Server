@@ -36,7 +36,6 @@ async def signup(
         session: AsyncSession = Depends(get_session)
 ):
     email = user_data.email
-
     user_exists = await user_service.user_exists(email, session)
 
     if user_exists:
