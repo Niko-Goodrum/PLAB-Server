@@ -44,12 +44,11 @@ class UserService:
         session.add(new_user)
         await session.flush()
         await session.commit()
-        logging.exception(msg="흑인")
 
         try:
             await session.refresh(new_user)
         except Exception as e:
-            logging.exception(msg=e)
+            raise e
 
         return new_user
 
