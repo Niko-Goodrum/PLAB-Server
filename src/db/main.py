@@ -1,15 +1,18 @@
+import asyncio
 from typing import AsyncGenerator
 
+from sqlalchemy.exc import DisconnectionError
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel, create_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.config import Config
-
+from src.routers.auth.exceptions import InvalidCredentials
 
 async_engine = create_async_engine(
-    url=Config.DATABASE_URL_ASYNC
+    url=Config.DATABASE_URL_ASYNC,
+    echo=True
 )
 
 Session = sessionmaker(
@@ -23,5 +26,15 @@ async def init_db() -> None:
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    async with Session() as session:
-        yield session
+    while True:
+        async with Session() as session:
+            try:
+                yield session
+                return
+            except DisconnectionError:
+                await session.rollback()
+                await asyncio.sleep(5)
+                continue
+
+
+
