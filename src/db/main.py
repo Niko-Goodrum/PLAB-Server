@@ -1,6 +1,7 @@
 import asyncio
 from typing import AsyncGenerator
 
+from sqlalchemy import NullPool
 from sqlalchemy.exc import DisconnectionError
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 from sqlalchemy.orm import sessionmaker
@@ -12,6 +13,7 @@ from src.routers.auth.exceptions import InvalidCredentials
 
 async_engine = create_async_engine(
     url=Config.DATABASE_URL_ASYNC,
+    poolclass=NullPool,
     echo=True
 )
 
