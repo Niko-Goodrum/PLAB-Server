@@ -15,9 +15,6 @@ async_engine = create_async_engine(
     echo=True
 )
 
-Session = sessionmaker(
-    bind=async_engine, class_=AsyncSession, autoflush=True, autocommit=True
-)
 
 
 async def init_db() -> None:
@@ -26,6 +23,10 @@ async def init_db() -> None:
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
+    Session = sessionmaker(
+        bind=async_engine, class_=AsyncSession
+    )
+
     async with Session() as session:
         try:
             yield session
