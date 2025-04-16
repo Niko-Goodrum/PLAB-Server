@@ -16,7 +16,7 @@ async_engine = create_async_engine(
 )
 
 Session = sessionmaker(
-    bind=async_engine, class_=AsyncSession, expire_on_commit=False, autoflush=False, autocommit=False
+    bind=async_engine, class_=AsyncSession, autoflush=True, autocommit=True
 )
 
 
@@ -29,7 +29,6 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with Session() as session:
         try:
             yield session
-            await session.commit()
         except Exception as e:
             await session.rollback()
             raise
