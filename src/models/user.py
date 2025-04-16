@@ -18,4 +18,4 @@ class User(BaseUUIDModel, UserBase, table=True):
     __tablename__ = "users"
 
     def __repr__(self) -> str:
-        return f"<User {self.username}, email={self.email}, uuid={self.uuid}>"
+        return f"<User {self.username}, email={self.email}, uuid={self.id}>"

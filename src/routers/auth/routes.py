@@ -3,7 +3,7 @@ from datetime import timedelta, datetime
 from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.responses import JSONResponse
-from starlette.status import HTTP_200_OK
+from starlette.status import HTTP_200_OK, HTTP_201_CREATED
 
 from .dependencies import (
     AccessTokenBearer,
@@ -36,14 +36,17 @@ async def signup(
         session: AsyncSession = Depends(get_session)
 ):
     email = user_data.email
-    user_exists = await user_service.user_exists(email, session)
+    user = await user_service.get_user_by_email(email, session)
 
-    if user_exists:
+    if user:
         raise UserAlreadyExists()
 
-    await user_service.create_user(user_data, session)
+    new_user = await user_service.create_user(user_data, session)
 
-    return JSONResponse(status_code=201, content=BaseResponse(message="회원가입이 완료되었습니다.").to_dict())
+    if new_user:
+        return JSONResponse(status_code=HTTP_201_CREATED, content=BaseResponse(message="회원가입이 완료되었습니다.").to_dict())
+
+    raise InvalidCredentials()
 
 
 @auth_router.post("/signin", response_model=BaseResponse)

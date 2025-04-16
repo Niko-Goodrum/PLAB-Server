@@ -29,10 +29,6 @@ class UserService:
 
         return user
 
-    async def user_exists(self, email, session: AsyncSession):
-        user = await self.get_user_by_email(email, session)
-
-        return True if user is not None else False
 
     async def create_user(self, user_data: CreateUserRequest, session: AsyncSession):
         user_data_dict = user_data.model_dump()
@@ -43,12 +39,6 @@ class UserService:
 
         session.add(new_user)
         await session.flush()
-        await session.commit()
-
-        try:
-            await session.refresh(new_user)
-        except Exception as e:
-            raise e
 
         return new_user
 
