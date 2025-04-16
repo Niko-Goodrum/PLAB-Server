@@ -11,6 +11,8 @@ from src.routers.auth.utils import generate_password_hash
 
 
 class UserService:
+    logger = logging.getLogger(__name__)
+
     async def get_user_by_email(self, email: str, session: AsyncSession) -> User | None:
         try:
             statement = select(User).where(User.email == email)
@@ -19,6 +21,7 @@ class UserService:
 
             return user
         except Exception as e:
+            logging.exception(e)
             await session.rollback()
             return None
 
