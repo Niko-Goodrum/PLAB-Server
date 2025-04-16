@@ -1,3 +1,4 @@
+import logging
 import uuid
 
 from sqlmodel import select
@@ -41,8 +42,13 @@ class UserService:
         new_user.password_hash = generate_password_hash(user_data.password)
 
         session.add(new_user)
+        await session.flush()
         await session.commit()
-        await session.refresh(new_user)
+
+        try:
+            await session.refresh(new_user)
+        except Exception as e:
+            logging.exception(e)
 
         return new_user
 
