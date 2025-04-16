@@ -44,6 +44,9 @@ async def signup(
     new_user = await user_service.create_user(user_data, session)
 
     if new_user:
+        await session.commit()
+        await session.refresh(new_user)
+
         return JSONResponse(status_code=HTTP_201_CREATED, content=BaseResponse(message="회원가입이 완료되었습니다.").to_dict())
 
     raise InvalidCredentials()
