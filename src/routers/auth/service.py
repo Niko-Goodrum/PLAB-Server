@@ -22,7 +22,6 @@ class UserService:
             return user
         except Exception as e:
             logging.exception(e)
-            await session.rollback()
             return None
 
 
