@@ -42,11 +42,9 @@ async def signup(
     if user_exists:
         raise UserAlreadyExists()
 
-    new_user = await user_service.create_user(user_data, session)
+    await user_service.create_user(user_data, session)
 
-    token = create_access_token({"email": email})
-
-    return JSONResponse(status_code=201, content=BaseResponse(message="회원가입이 완료되었습니다.").to_dict()())
+    return JSONResponse(status_code=201, content=BaseResponse(message="회원가입이 완료되었습니다.").to_dict())
 
 
 @auth_router.post("/signin", response_model=BaseResponse)
