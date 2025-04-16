@@ -26,15 +26,13 @@ async def init_db() -> None:
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    while True:
-        async with Session() as session:
-            try:
-                yield session
-                return
-            except DisconnectionError:
-                await session.rollback()
-                await asyncio.sleep(5)
-                continue
+    async with Session() as session:
+        try:
+            yield session
+        except Exception as e:
+            await session.rollback()
+            raise e
+
 
 
 
