@@ -43,8 +43,10 @@ async def signup(
 
     new_user = await user_service.create_user(user_data, session)
 
-    return JSONResponse(status_code=HTTP_201_CREATED, content=BaseResponse(message="회원가입이 완료되었습니다.").to_dict())
+    if new_user:
+        return JSONResponse(status_code=HTTP_201_CREATED, content=BaseResponse(message="회원가입이 완료되었습니다.").to_dict())
 
+    raise InvalidCredentials()
 
 
 @auth_router.post("/signin", response_model=BaseResponse)
