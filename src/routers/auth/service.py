@@ -1,6 +1,7 @@
 import logging
 import uuid
 
+from sqlalchemy.exc import NoResultFound
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -10,14 +11,16 @@ from src.routers.auth.utils import generate_password_hash
 
 
 class UserService:
-    async def get_user_by_email(self, email: str, session: AsyncSession) -> User:
-        statement = select(User).where(User.email == email)
+    async def get_user_by_email(self, email: str, session: AsyncSession) -> User | None:
+        try:
+            statement = select(User).where(User.email == email)
+            result = await session.exec(statement)
+            user = result.first()
 
-        result = await session.exec(statement)
-
-        user = result.first()
-
-        return user
+            return user
+        except Exception as e:
+            await session.rollback()
+            return None
 
 
     async def get_user_by_id(self, user_uuid: uuid.UUID, session: AsyncSession):
