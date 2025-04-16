@@ -12,10 +12,7 @@ from src.routers.auth.exceptions import InvalidCredentials
 
 async_engine = create_async_engine(
     url=Config.DATABASE_URL_ASYNC,
-    echo=True,
-    pool_size=5,
-    max_overflow=10,
-    pool_timeout=30
+    echo=True
 )
 
 async def init_db() -> None:
