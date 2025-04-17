@@ -7,15 +7,15 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.handlers.auth import add_auth_exception_handlers
 from src.handlers import add_validation_exception_handler
+from src.routers.auth.dependencies import AccessTokenBearer
+from src.routers.portfolio.routes import portfolio_router
 from src.routers.root.routes import root_router
 from src.routers.auth.routes import auth_router
 
-AUTH_HEADER = APIKeyHeader(name="Authorization", auto_error=False)
 
 
 app = FastAPI(
     redoc_url=None,
-    dependencies=[Depends(AUTH_HEADER)],
 )
 
 app.add_middleware(
@@ -45,3 +45,4 @@ add_auth_exception_handlers(app)
 
 app.include_router(root_router, tags=["상드름"])
 app.include_router(auth_router, tags=["Auth"])
+app.include_router(portfolio_router, tags=["포트폴리오"])
