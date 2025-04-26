@@ -1,12 +1,11 @@
 import sqlalchemy.dialects.postgresql as pg
 from sqlmodel import Column, Field
-from async_sqlmodel import AsyncSQLModel
 
-from src.models.base_uuid_model import BaseUUIDModel
+from src.models.uuid import BaseUUIDModel
+from src.schemas import BaseDictModel
 
 
-
-class UserBase(AsyncSQLModel):
+class UserBase(BaseDictModel):
 
     username: str = Field(nullable=False)
     email: str = Field(sa_column=Column(pg.VARCHAR, nullable=False))

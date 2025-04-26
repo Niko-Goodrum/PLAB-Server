@@ -8,18 +8,17 @@ from starlette.status import HTTP_200_OK, HTTP_201_CREATED
 from .dependencies import (
     AccessTokenBearer,
     RefreshTokenBearer,
-    get_current_user,
 )
 from .exceptions import UserAlreadyExists, InvalidCredentials, InvalidToken
 from src.schemas.user import CreateUserRequest, SigninRequest, UserResponse, RefreshRequest
-from .service import UserService
+from src.services.user import UserService
 from .utils import create_access_token, verify_password
 from ...config import Config
 from ...db.main import get_session
 from src.schemas import BaseResponse
 
 auth_router = APIRouter(prefix="/auth", responses={
-    200: {
+    201: {
         "model": BaseResponse
     },
     422: {
@@ -67,14 +66,14 @@ async def signin(
             access_token = create_access_token(
                 user_data={
                     "email": email,
-                    "user_uuid": str(user.id),
+                    "uuid": str(user.id),
                 }
             )
 
             refresh_token = create_access_token(
                 user_data={
                     "email": email,
-                    "user_uuid": str(user.id),
+                    "uuid": str(user.id),
                 },
                 refresh=True,
                 expiry=timedelta(hours=Config.REFRESH_EXPIRY)
@@ -115,3 +114,4 @@ async def refresh(
 
 
     raise InvalidToken
+

@@ -1,14 +1,12 @@
-from typing import Any, List
+from typing import Any
 
-from fastapi import Depends, Request, status
-from fastapi.exceptions import HTTPException
-from fastapi.security import HTTPBasic
+from fastapi import Depends, Request
 from fastapi.security.http import HTTPAuthorizationCredentials, HTTPBearer
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.db.main import get_session
 from src.routers.auth.exceptions import InvalidToken, AccessTokenRequired, RefreshTokenRequired
-from src.routers.auth.service import UserService
+from src.services.user import UserService
 from src.routers.auth.utils import decode_token
 from src.schemas.user import RefreshRequest
 

@@ -1,18 +1,16 @@
-import json
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
-from fastapi.security.api_key import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.handlers.auth import add_auth_exception_handlers
 from src.handlers import add_validation_exception_handler
-from src.routers.auth.dependencies import AccessTokenBearer
+from src.handlers.interview import add_interview_exception_handler
+from src.routers.interview.routes import interview_router
 from src.routers.portfolio.routes import portfolio_router
 from src.routers.root.routes import root_router
 from src.routers.auth.routes import auth_router
-
-
+from src.routers.user.routes import user_router
 
 app = FastAPI(
     redoc_url=None,
@@ -41,8 +39,11 @@ app.openapi = custom_openapi
 
 add_validation_exception_handler(app)
 add_auth_exception_handlers(app)
+add_interview_exception_handler(app)
 
 
-app.include_router(root_router, tags=["상드름"])
+app.include_router(root_router, tags=["Root"])
 app.include_router(auth_router, tags=["Auth"])
+app.include_router(user_router, tags=["User"])
 app.include_router(portfolio_router, tags=["포트폴리오"])
+app.include_router(interview_router, tags=["면접"])

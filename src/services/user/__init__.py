@@ -26,7 +26,7 @@ class UserService:
 
 
     async def get_user_by_id(self, user_uuid: uuid.UUID, session: AsyncSession):
-        statement = select(User).where(User.uuid == user_uuid)
+        statement = select(User).where(User.id == user_uuid)
 
         result = await session.exec(statement)
 
@@ -52,6 +52,8 @@ class UserService:
     async def update_user(self, user: User, user_date: dict, session: AsyncSession):
         for k, v in user_date.items():
             setattr(user, k, v)
+
+        await session.flush()
 
         await session.commit()
         await session.refresh(user)
