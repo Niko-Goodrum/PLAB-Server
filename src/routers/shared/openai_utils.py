@@ -48,7 +48,7 @@ def make_prompt(type: InterviewType) -> str:
                     5. 질문은 한 번에 하나씩만 하세요.
                     6. 답변 이후, 간단한 피드백이나 후속 질문을 해주세요."""
 
-    elif type == InterviewType.Behavioral:
+    elif type == InterviewType.Person:
         prompt += """당신은 신입 개발자를 평가하는 **인성 면접관**입니다. 인성과 소프트 스킬 중심으로 면접을 진행합니다. 다음 규칙을 따르세요:
                     1. 지원자의 커뮤니케이션 능력, 태도, 동기, 협업 경험, 문제 해결 방식 등을 중심으로 질문하세요.
                     2. 상황 기반 질문(Situation-Task-Action-Result, STAR)을 활용하세요.

@@ -22,13 +22,6 @@ access_token_bearer = AccessTokenBearer()
 async def get_portfolio(
         _: dict = Depends(access_token_bearer)
 ):
-    return JSONResponse(status_code= HTTP_200_OK, content=BaseResponse(message="Portfolio").to_dict())
-
-
-@portfolio_router.get("", response_model=BaseResponse)
-async def get_portfolio(
-        _: dict = Depends(access_token_bearer)
-):
     return JSONResponse(status_code= HTTP_200_OK, content=BaseResponse(message="Get Portfolio").to_dict())
 
 
