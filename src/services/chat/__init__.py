@@ -15,7 +15,6 @@ class ChatService:
     async def create_chat(self, user_id: uuid.UUID, type: str, last_question: str, session: AsyncSession):
 
         chat_dict: dict[str, Any] = {
-            "last_answer": "",
             "last_question": last_question,
             "type": type,
             "user_id": user_id
@@ -56,3 +55,13 @@ class ChatService:
         await session.refresh(chat)
 
         return chat
+
+
+    async def get_chats_by_user_id(self, user_id: uuid.UUID, session: AsyncSession):
+        try :
+            statement = select(Chat).where(Chat.user_id == user_id)
+            result = await session.exec(statement)
+            return result
+
+        except Exception as e:
+            return []

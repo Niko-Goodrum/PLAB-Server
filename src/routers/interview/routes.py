@@ -37,7 +37,6 @@ async def create_interview(
 
     user_data = User(**user_data["user"])
 
-
     question = sentences[0]
 
     if question is None or len(question) == 0:

@@ -12,4 +12,6 @@ class BaseResponse(BaseDictModel):
     data: Union[dict, None] = None
 
 
-    
+class BaseListResponse(BaseDictModel):
+    message: str
+    data: list = None

@@ -80,7 +80,8 @@ async def create_interview_prompt(last_question = None, last_answer = None, type
 
     prompt += """
     첫번째 문장에는 답변에 대한 피드백을 포함해주세요.
-    두번째 문장에는 다음 질문은 이어가주세요.
+    피드백은 "~하면 좋아요." 와 같은 문맥이여야 합니다.
+    두번째 문장에는 다음 질문을 이어가주세요.
     """
 
     if last_question is not None:

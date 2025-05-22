@@ -66,14 +66,14 @@ async def signin(
             access_token = create_access_token(
                 user_data={
                     "email": email,
-                    "uuid": str(user.id),
+                    "id": str(user.id),
                 }
             )
 
             refresh_token = create_access_token(
                 user_data={
                     "email": email,
-                    "uuid": str(user.id),
+                    "id": str(user.id),
                 },
                 refresh=True,
                 expiry=timedelta(hours=Config.REFRESH_EXPIRY)
