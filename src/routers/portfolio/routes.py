@@ -85,14 +85,14 @@ async def upload_image(
 
         blob_request = vercel_blob.put(
             new_filename,
-            save_file_content,
+            save_file_content
         )
 
         blob_metadata = vercel_blob.head(
-            new_filename,
+            new_filename
         )
 
-        blob_url = blob_metadata.get("downloadUrl")
+        blob_url = blob_metadata.get("url")
 
         if not blob_url:
             raise UrlLoadError()
