@@ -1,4 +1,4 @@
-
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.handlers.auth import add_auth_exception_handlers
 from src.handlers import add_validation_exception_handler
 from src.handlers.interview import add_interview_exception_handler
+from src.handlers.portfolio import add_portfoilo_exception_handler
 from src.routers.interview.routes import interview_router
 from src.routers.portfolio.routes import portfolio_router
 from src.routers.root.routes import root_router
@@ -15,6 +16,8 @@ from src.routers.user.routes import user_router
 app = FastAPI(
     redoc_url=None,
 )
+
+load_dotenv()
 
 app.add_middleware(
     CORSMiddleware,
@@ -40,6 +43,7 @@ app.openapi = custom_openapi
 add_validation_exception_handler(app)
 add_auth_exception_handlers(app)
 add_interview_exception_handler(app)
+add_portfoilo_exception_handler(app)
 
 
 app.include_router(root_router, tags=["Root"])

@@ -25,4 +25,4 @@ class Chat(BaseUUIDModel, ChatBase, table=True):
     user: Optional[User] = Relationship(back_populates="chats")
 
     def __repr__(self) -> str:
-        return f"<Chat last_answer={self.last_answer}, uuid={self.id}>"
+        return f"<Chat uuid={self.id}>"

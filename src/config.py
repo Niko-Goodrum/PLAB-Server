@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     DATABASE_URL_ASYNC: str
     OPENAI_KEY: str
     OPENAI_MODEL: str
+    BLOB_READ_WRITE_TOKEN: str
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 Config = Settings()
