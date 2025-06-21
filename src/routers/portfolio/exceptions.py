@@ -18,3 +18,9 @@ class UrlLoadError(Exception):
 
 class UploadError(Exception):
     pass
+
+class PortfolioAvailableError(Exception):
+    pass
+
+class PortfolioNotFoundError(Exception):
+    pass

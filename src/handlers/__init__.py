@@ -15,6 +15,7 @@ from fastapi.encoders import jsonable_encoder
 def add_validation_exception_handler(app: FastAPI):
     @app.exception_handler(RequestValidationError)
     async def invalid_token_handler(request: BaseModel, exc: RequestValidationError):
+        print(exc.errors())
         return JSONResponse(status_code=422, content=BaseResponse(message="잘못된 접근입니다.").to_dict())
 
     @app.exception_handler(ValidationError)

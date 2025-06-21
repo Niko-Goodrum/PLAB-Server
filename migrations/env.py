@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 from sqlmodel import SQLModel
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 
 from src.config import Config
 
