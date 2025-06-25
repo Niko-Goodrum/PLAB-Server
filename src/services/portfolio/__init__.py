@@ -1,14 +1,34 @@
 import uuid
+
+from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Any, Optional
 
+from sqlalchemy.orm import selectinload, joinedload
 from sqlmodel import select
 
-from src.models.portfolio import Portfolio
+from src.models.portfolio import Portfolio, Career, Project, Education, ProjectURL
 from src.schemas.portfolio import EditPortfolioRequest
 
 
 class PortfolioService:
+    async def get_portfolio(
+            self,
+            user_id: uuid.UUID,
+            session: AsyncSession
+    ) -> Optional[Portfolio]:
+
+        statement = select(Portfolio).where(Portfolio.user_id == user_id).options(
+            joinedload(Portfolio.careers),
+            joinedload(Portfolio.projects).joinedload(Project.urls),
+            joinedload(Portfolio.educations).joinedload(Education.grade)
+        )
+
+        result = await session.execute(statement)
+        portfolio = result.unique().scalar_one_or_none()
+
+        return portfolio
+
     async def create_portfolio(self, user_id: uuid.UUID, name: str, session: AsyncSession):
         create_dict: dict[str, Any] = {
             "name": name,
@@ -24,39 +44,53 @@ class PortfolioService:
 
         return created_portfolio
 
-    async def edit_portfolio(self, user_id: uuid.UUID, request: EditPortfolioRequest, session: AsyncSession) -> Optional[Portfolio]:
+    async def edit_portfolio(
+        self,
+        user_id: uuid.UUID,
+        request: EditPortfolioRequest,
+        session: AsyncSession
+    ) -> Optional[Portfolio]:
+
         statement = select(Portfolio).where(Portfolio.user_id == user_id)
         result = await session.execute(statement)
-        existing_portfolio = result.scalar_one_or_none()
+        portfolio = result.scalar_one_or_none()
 
-        if not existing_portfolio:
+        if not portfolio:
             return None
 
-        update_data = request.model_dump(exclude_none=True)
+        update_fields = request.model_dump(
+            exclude_none=True,
+            exclude={"careers", "projects", "educations"}
+        )
+        for key, value in update_fields.items():
+            setattr(portfolio, key, value)
 
-        if 'careers' in update_data and update_data['careers'] is not None:
-            update_data['careers'] = [
-                career.model_dump() for career in request.careers if career is not None
-            ]
+        if request.careers is not None:
+            await session.execute(delete(Career).where(Career.portfolio_id == portfolio.id))
+            for career_data in request.careers:
+                careers = Career(**career_data.model_dump())
+                careers.portfolio_id = portfolio.id
+                session.add(careers)
 
-        if 'projects' in update_data and update_data['projects'] is not None:
-            update_data['projects'] = [
-                project.model_dump() for project in request.projects if project is not None
-            ]
+        if request.projects is not None:
+            await session.execute(delete(Project).where(Project.portfolio_id == portfolio.id))
+            for project_data in request.projects:
+                projects = Career(**project_data.model_dump())
+                projects.portfolio_id = portfolio.id
+                session.add(projects)
 
-        if 'educations' in update_data and update_data['educations'] is not None:
-            update_data['educations'] = [
-                education.model_dump() for education in request.educations if education is not None
-            ]
+        if request.educations is not None:
+            await session.execute(delete(Education).where(Education.portfolio_id == portfolio.id))
+            for edu_data in request.educations:
+                educations = Career(**edu_data.model_dump())
+                educations.portfolio_id = portfolio.id
+                session.add(educations)
 
-        for field_name, value in update_data.items():
-            setattr(existing_portfolio, field_name, value)
-
-        session.add(existing_portfolio)
+        session.add(portfolio)
         await session.commit()
-        await session.refresh(existing_portfolio)
+        await session.refresh(portfolio)
 
-        return existing_portfolio
+        return portfolio
 
     async def delete_portfolio_by_user_id(self, user_id: uuid.UUID, session: AsyncSession) -> Optional[Portfolio]:
         statement = select(Portfolio).where(Portfolio.user_id == user_id)

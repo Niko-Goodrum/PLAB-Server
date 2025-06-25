@@ -43,12 +43,14 @@ async def get_portfolio(
         session: AsyncSession = Depends(get_session)
 ):
     user_data = User(**user_data["user"])
-    user = await user_service.get_user_by_email(email=user_data.email, session=session)
+    portfolio = await portfolio_service.get_portfolio(user_id=user_data.id, session=session)
 
-    if user.portfolio is None:
+    if portfolio is None:
         raise PortfolioNotFoundError
 
-    return JSONResponse(status_code=HTTP_200_OK, content=BaseResponse(message="포트폴리오를 성공적으로 불러왔습니다.", data=user.portfolio.to_dict()).to_dict())
+    print(portfolio.model_dump(exclude_none=False))
+
+    return JSONResponse(status_code=HTTP_200_OK, content=BaseResponse(message="포트폴리오를 성공적으로 불러왔습니다.", data=portfolio.to_dict()).to_dict())
 
 @portfolio_router.get("/feedback", response_model=BaseResponse)
 async def feedback_portfolio(
