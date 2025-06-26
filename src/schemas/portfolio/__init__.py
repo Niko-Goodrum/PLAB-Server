@@ -4,11 +4,70 @@ from pydantic import Field, ConfigDict
 from sqlalchemy import Column, ARRAY
 
 from src.models import BaseDictModel
-from src.models.portfolio import CareerBase, ProjectBase, EducationBase
+from src.models.portfolio import CareerBase, ProjectBase, EducationBase, ProjectURLBase, GradeBase
 
 
 class ImageUploadResponse(BaseDictModel):
     image_url: str = Field()
+
+class CareerResponse(BaseDictModel):
+    company_name: str
+    part: str
+    position: str
+    join_date: str
+    resign_date: Optional[str]
+    task: Optional[str]
+    techs: Optional[List[str]]
+
+    model_config = {
+        "from_attributes": True
+    }
+
+
+class ProjectResponse(BaseDictModel):
+    name: str
+    part: str
+    start_date: str
+    end_date: Optional[str]
+    task: Optional[str]
+    images: Optional[List[str]]
+    techs: Optional[List[str]]
+    urls: Optional[List[ProjectURLBase]]
+
+    model_config = {
+        "from_attributes": True
+    }
+
+class EducationResponse(BaseDictModel):
+    school_name: str
+    level: str
+    status: str
+    join_date: str
+    resign_date: Optional[str]
+    major: Optional[str]
+    description: Optional[str]
+    grade: Optional[GradeBase]
+
+    model_config = {
+        "from_attributes": True
+    }
+
+
+class PortfolioResponse(BaseDictModel):
+    name: str
+    phone_num: Optional[str]
+    email: Optional[str]
+    user_image: Optional[str]
+    introduce: Optional[str]
+    job: Optional[str]
+    techs: Optional[List[str]]
+    careers: Optional[List[CareerResponse]]
+    projects: Optional[List[ProjectResponse]]
+    educations: Optional[List[EducationResponse]]
+
+    model_config = {
+        "from_attributes": True
+    }
 
 
 class EditPortfolioRequest(BaseDictModel):

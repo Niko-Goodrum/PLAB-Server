@@ -24,7 +24,7 @@ class CareerBase(BaseDictModel):
 
 class ProjectURLBase(BaseDictModel):
     title: str
-    link: Optional[str] = None
+    link: Optional[str]
 
 class ProjectBase(BaseDictModel):
     name: str
@@ -60,19 +60,19 @@ class PortfolioBase(BaseDictModel):
 class Career(BaseUUIDModel, CareerBase, table=True):
     __tablename__ = "careers"
 
-    portfolio_id: Optional[uuid.UUID] = Field(default=None, foreign_key="portfolio.id")
+    portfolio_id: Optional[uuid.UUID] = Field(default=None, foreign_key="portfolio.id", unique=False)
     portfolio: Optional["Portfolio"] = Relationship(back_populates="careers")
 
 class ProjectURL(BaseUUIDModel, ProjectURLBase, table=True):
     __tablename__ = "project_urls"
 
-    project_id: Optional[uuid.UUID] = Field(default=None, foreign_key="projects.id")
+    project_id: Optional[uuid.UUID] = Field(default=None, foreign_key="projects.id", unique=False)
     project: Optional["Project"] = Relationship(back_populates="urls")
 
 class Project(BaseUUIDModel, ProjectBase, table=True):
     __tablename__ = "projects"
 
-    portfolio_id: Optional[uuid.UUID] = Field(default=None, foreign_key="portfolio.id")
+    portfolio_id: Optional[uuid.UUID] = Field(default=None, foreign_key="portfolio.id", unique=False)
     portfolio: Optional["Portfolio"] = Relationship(back_populates="projects")
 
     urls: List["ProjectURL"] = Relationship(sa_relationship=relationship("ProjectURL", back_populates="project", cascade="all, delete-orphan", lazy="select"))
@@ -86,7 +86,7 @@ class Grade(BaseUUIDModel, GradeBase, table=True):
 class Education(BaseUUIDModel, EducationBase, table=True):
     __tablename__ = "educations"
 
-    portfolio_id: Optional[uuid.UUID] = Field(default=None, foreign_key="portfolio.id")
+    portfolio_id: Optional[uuid.UUID] = Field(default=None, foreign_key="portfolio.id", unique=False)
     portfolio: Optional["Portfolio"] = Relationship(back_populates="educations")
 
     grade: Optional["Grade"] = Relationship(sa_relationship=relationship("Grade", back_populates="education", lazy="select"))

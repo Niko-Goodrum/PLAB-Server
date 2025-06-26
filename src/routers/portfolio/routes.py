@@ -32,7 +32,7 @@ portfolio_router = APIRouter(prefix="/portfolio", responses={
     }
 })
 
-access_token_bearer = AccessTokenBearer()
+access_token_bearer = AccessTokenBearer(    )
 
 user_service = UserService()
 portfolio_service = PortfolioService()
@@ -47,8 +47,6 @@ async def get_portfolio(
 
     if portfolio is None:
         raise PortfolioNotFoundError
-
-    print(portfolio.model_dump(exclude_none=False))
 
     return JSONResponse(status_code=HTTP_200_OK, content=BaseResponse(message="포트폴리오를 성공적으로 불러왔습니다.", data=portfolio.to_dict()).to_dict())
 

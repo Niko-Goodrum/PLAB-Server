@@ -8,7 +8,7 @@ from sqlalchemy.orm import selectinload, joinedload
 from sqlmodel import select
 
 from src.models.portfolio import Portfolio, Career, Project, Education, ProjectURL
-from src.schemas.portfolio import EditPortfolioRequest
+from src.schemas.portfolio import EditPortfolioRequest, PortfolioResponse, ProjectResponse, EducationResponse
 
 
 class PortfolioService:
@@ -16,7 +16,7 @@ class PortfolioService:
             self,
             user_id: uuid.UUID,
             session: AsyncSession
-    ) -> Optional[Portfolio]:
+    ) -> Optional[PortfolioResponse]:
 
         statement = select(Portfolio).where(Portfolio.user_id == user_id).options(
             joinedload(Portfolio.careers),
@@ -25,9 +25,11 @@ class PortfolioService:
         )
 
         result = await session.execute(statement)
-        portfolio = result.unique().scalar_one_or_none()
 
-        return portfolio
+
+        portfolio = result.unique().scalar_one_or_none()
+        return PortfolioResponse.model_validate(portfolio)
+
 
     async def create_portfolio(self, user_id: uuid.UUID, name: str, session: AsyncSession):
         create_dict: dict[str, Any] = {
