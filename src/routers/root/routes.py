@@ -1,14 +1,12 @@
-from fastapi import APIRouter
+from pathlib import Path
 
-from src.schemas import BaseResponse, toJson
+from fastapi import APIRouter
+from fastapi.responses import FileResponse
 
 root_router = APIRouter()
+INDEX_FILE = Path(__file__).resolve().parents[2] / "index.html"
 
 
-@root_router.get("/", response_model=BaseResponse, responses={
-    200: {
-        "model": BaseResponse
-    }
-})
+@root_router.get("/", response_class=FileResponse, include_in_schema=False)
 async def root():
-    return toJson(status_code=200, content=BaseResponse(message="상민이 여드름").to_dict())
+    return FileResponse(INDEX_FILE)
